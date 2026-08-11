@@ -129,7 +129,7 @@
                         <div>
                             <label class="block text-xs font-medium text-slate-400 mb-1">Categoría</label>
                             <select id="filter-categoria" onchange="filtrarCatalog()" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white">
-                                <option value="">Todas</option><option value="Programación">Programación</option><option value="Diseño">Diseño</option><option value="Electrónica">Electrónica</option><option value="General">General</option>
+                                <option value="">Todas</option><option value="Programación">Programación</option><option value="Diseño">Diseño</option><option value="Electrónica">Electrica</option><option value="General">General</option>
                             </select>
                         </div>
                         <div>
@@ -146,7 +146,7 @@
                     <div class="mb-6">
                         <label class="block text-sm font-medium text-slate-300 mb-2">Selecciona la carrera:</label>
                         <select id="select-carrera" onchange="renderRecomendaciones()" class="bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white w-full md:w-64">
-                            <option value="Informática">Informática</option><option value="Diseño">Diseño</option><option value="Electrónica">Electrónica</option>
+                            <option value="Informática">Informática</option><option value="Diseño">Diseño</option><option value="Electrónica">Electrica</option>
                         </select>
                     </div>
                     <div id="contenedor-recomendaciones" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
@@ -181,7 +181,7 @@
                     <h2 class="text-2xl font-bold mb-4 flex items-center gap-2 text-blue-400"><i data-lucide="plus-circle"></i> Añadir Nuevo Software</h2>
                     <form id="form-nuevo-software" onsubmit="guardarNuevoSoftware(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-900 p-5 rounded-xl border border-slate-700">
                         <div><label class="block text-xs font-medium text-slate-400 mb-1">Nombre *</label><input type="text" id="reg-nombre" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white"></div>
-                        <div><label class="block text-xs font-medium text-slate-400 mb-1">Categoría *</label><select id="reg-categoria" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white"><option value="Programación">Programación</option><option value="Diseño">Diseño</option><option value="Electrónica">Electrónica</option><option value="General">General</option></select></div>
+                        <div><label class="block text-xs font-medium text-slate-400 mb-1">Categoría *</label><select id="reg-categoria" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white"><option value="Programación">Programación</option><option value="Diseño">Diseño</option><option value="Electrónica">Electrica </option><option value="General">General</option></select></div>
                         <div><label class="block text-xs font-medium text-slate-400 mb-1">Licencia *</label><select id="reg-licencia" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white"><option value="Libre">Libre</option><option value="Gratuito">Gratuito</option><option value="Comercial">Comercial</option></select></div>
                         <div><label class="block text-xs font-medium text-slate-400 mb-1">Sistemas Operativos *</label><input type="text" id="reg-so" value="Windows, Linux, Mac" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white"></div>
                         <div><label class="block text-xs font-medium text-slate-400 mb-1">Versión *</label><input type="text" id="reg-version" value="1.0" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white"></div>
