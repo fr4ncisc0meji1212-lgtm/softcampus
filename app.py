@@ -42,6 +42,7 @@ def init_db():
             estado TEXT NOT NULL
         )
     ''')
+    cur.execute('ALTER TABLE solicitudes ADD COLUMN IF NOT EXISTS nie TEXT')
 
     cur.execute('''
         CREATE TABLE IF NOT EXISTS kits (
@@ -49,6 +50,14 @@ def init_db():
             nombre TEXT NOT NULL,
             carrera TEXT NOT NULL,
             programas TEXT NOT NULL
+        )
+    ''')
+
+    cur.execute('''
+        CREATE TABLE IF NOT EXISTS estudiantes (
+            id SERIAL PRIMARY KEY,
+            nie TEXT UNIQUE NOT NULL,
+            nombre TEXT NOT NULL
         )
     ''')
 
@@ -72,6 +81,8 @@ def init_db():
 def index():
     return render_template('index.html')
 
+
+# ---------- SOFTWARE ----------
 
 @app.route('/api/software', methods=['GET'])
 def obtener_software():
@@ -152,11 +163,17 @@ def eliminar_software(id):
     return jsonify({'status': 'eliminado'})
 
 
+# ---------- SOLICITUDES ----------
+
 @app.route('/api/solicitudes', methods=['GET'])
 def obtener_solicitudes():
+    nie = request.args.get('nie')
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute('SELECT * FROM solicitudes')
+    if nie:
+        cur.execute('SELECT * FROM solicitudes WHERE nie = %s ORDER BY id DESC', (nie,))
+    else:
+        cur.execute('SELECT * FROM solicitudes ORDER BY id DESC')
     solicitudes = cur.fetchall()
     cur.close()
     conn.close()
@@ -169,11 +186,11 @@ def agregar_solicitud():
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute('''
-        INSERT INTO solicitudes (nombre, carrera, comentario, solicitadoPor, fecha, estado)
-        VALUES (%s, %s, %s, %s, %s, %s)
+        INSERT INTO solicitudes (nombre, carrera, comentario, solicitadoPor, fecha, estado, nie)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
     ''', (
         nueva['nombre'].strip(), nueva['carrera'], nueva['comentario'].strip(),
-        nueva['solicitadoPor'], nueva['fecha'], nueva['estado']
+        nueva['solicitadoPor'], nueva['fecha'], nueva['estado'], nueva.get('nie')
     ))
     conn.commit()
     cur.close()
@@ -204,6 +221,8 @@ def eliminar_solicitud(id):
     conn.close()
     return jsonify({'status': 'eliminado'})
 
+
+# ---------- KITS ----------
 
 @app.route('/api/kits', methods=['GET'])
 def obtener_kits():
@@ -244,6 +263,76 @@ def eliminar_kit(id):
     cur.close()
     conn.close()
     return jsonify({'status': 'eliminado'})
+
+
+# ---------- ESTUDIANTES (cuentas y login) ----------
+
+@app.route('/api/estudiantes', methods=['GET'])
+def obtener_estudiantes():
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('SELECT id, nie, nombre FROM estudiantes ORDER BY id DESC')
+    estudiantes = cur.fetchall()
+    cur.close()
+    conn.close()
+    return jsonify([dict(row) for row in estudiantes])
+
+
+@app.route('/api/estudiantes', methods=['POST'])
+def crear_estudiante():
+    datos = request.json
+    nie = str(datos.get('nie', '')).strip()
+    nombre = str(datos.get('nombre', '')).strip()
+
+    if not nie.isdigit() or len(nie) < 8:
+        return jsonify({'error': 'El NIE debe tener 8 dígitos o más, solo números.'}), 400
+    if not nombre:
+        return jsonify({'error': 'El nombre es obligatorio.'}), 400
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+    try:
+        cur.execute('INSERT INTO estudiantes (nie, nombre) VALUES (%s, %s)', (nie, nombre))
+        conn.commit()
+        cur.close()
+        conn.close()
+        return jsonify({'status': 'ok'}), 201
+    except Exception as e:
+        conn.rollback()
+        cur.close()
+        conn.close()
+        if 'unique' in str(e).lower():
+            return jsonify({'error': 'Ese NIE ya tiene una cuenta registrada.'}), 400
+        return jsonify({'error': str(e)}), 400
+
+
+@app.route('/api/estudiantes/<int:id>', methods=['DELETE'])
+def eliminar_estudiante(id):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('DELETE FROM estudiantes WHERE id = %s', (id,))
+    conn.commit()
+    cur.close()
+    conn.close()
+    return jsonify({'status': 'eliminado'})
+
+
+@app.route('/api/login-estudiante', methods=['POST'])
+def login_estudiante():
+    datos = request.json
+    nie = str(datos.get('nie', '')).strip()
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('SELECT id, nie, nombre FROM estudiantes WHERE nie = %s', (nie,))
+    estudiante = cur.fetchone()
+    cur.close()
+    conn.close()
+
+    if estudiante:
+        return jsonify({'status': 'ok', 'nie': estudiante['nie'], 'nombre': estudiante['nombre']})
+    else:
+        return jsonify({'error': 'NIE no encontrado. Pide al administrador que cree tu cuenta.'}), 401
 
 
 init_db()
