@@ -996,25 +996,7 @@
                     setTimeout(async () => {
                         splash.classList.add('hidden');
 
-                        const rolGuardado = localStorage.getItem('softcampus_rol');
-                        const seccionGuardada = localStorage.getItem('softcampus_seccion');
-
-                        if (rolGuardado) {
-                            rolActual = rolGuardado;
-                            if (rolGuardado === 'admin') {
-                                document.getElementById('usuario-nombre').textContent = 'Administrador';
-                                document.getElementById('usuario-rol').textContent = correoAdminValido;
-                            } else {
-                                nieActual = localStorage.getItem('softcampus_nie') || '';
-                                nombreEstudianteActual = localStorage.getItem('softcampus_nombre_estudiante') || 'Estudiante';
-                                document.getElementById('usuario-nombre').textContent = nombreEstudianteActual;
-                                document.getElementById('usuario-rol').textContent = 'NIE: ' + nieActual;
-                            }
-                            await cargarDatosDesdeAPI();
-                            iniciarSesionExitosa(seccionGuardada);
-                        } else {
-                            document.getElementById('login-container').classList.remove('hidden');
-                        }
+                       document.getElementById('login-container').classList.remove('hidden');
                     }, 500);
                 }
             }, 1200);
