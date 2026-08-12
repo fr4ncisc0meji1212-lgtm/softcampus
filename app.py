@@ -1,6 +1,7 @@
 import os
 import psycopg2
 import psycopg2.extras
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Flask, render_template, jsonify, request
 
 app = Flask(__name__)
@@ -60,6 +61,7 @@ def init_db():
             nombre TEXT NOT NULL
         )
     ''')
+    cur.execute('ALTER TABLE estudiantes ADD COLUMN IF NOT EXISTS password TEXT')
 
     cur.execute('''
         INSERT INTO software (nombre, categoria, carrera, so, licencia, version, url, winget, "desc")
@@ -283,16 +285,21 @@ def crear_estudiante():
     datos = request.json
     nie = str(datos.get('nie', '')).strip()
     nombre = str(datos.get('nombre', '')).strip()
+    password = str(datos.get('password', '')).strip()
 
     if not nie.isdigit() or len(nie) < 8:
         return jsonify({'error': 'El NIE debe tener 8 dígitos o más, solo números.'}), 400
     if not nombre:
         return jsonify({'error': 'El nombre es obligatorio.'}), 400
+    if not password or len(password) < 4:
+        return jsonify({'error': 'La contraseña debe tener al menos 4 caracteres.'}), 400
+
+    password_hash = generate_password_hash(password)
 
     conn = get_db_connection()
     cur = conn.cursor()
     try:
-        cur.execute('INSERT INTO estudiantes (nie, nombre) VALUES (%s, %s)', (nie, nombre))
+        cur.execute('INSERT INTO estudiantes (nie, nombre, password) VALUES (%s, %s, %s)', (nie, nombre, password_hash))
         conn.commit()
         cur.close()
         conn.close()
@@ -321,18 +328,19 @@ def eliminar_estudiante(id):
 def login_estudiante():
     datos = request.json
     nie = str(datos.get('nie', '')).strip()
+    password = str(datos.get('password', '')).strip()
 
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute('SELECT id, nie, nombre FROM estudiantes WHERE nie = %s', (nie,))
+    cur.execute('SELECT id, nie, nombre, password FROM estudiantes WHERE nie = %s', (nie,))
     estudiante = cur.fetchone()
     cur.close()
     conn.close()
 
-    if estudiante:
+    if estudiante and estudiante.get('password') and check_password_hash(estudiante['password'], password):
         return jsonify({'status': 'ok', 'nie': estudiante['nie'], 'nombre': estudiante['nombre']})
     else:
-        return jsonify({'error': 'NIE no encontrado. Pide al administrador que cree tu cuenta.'}), 401
+        return jsonify({'error': 'NIE o contraseña incorrectos.'}), 401
 
 
 init_db()
