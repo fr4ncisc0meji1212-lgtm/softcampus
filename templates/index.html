@@ -43,10 +43,14 @@
             </div>
 
             <form id="form-login-estudiante" onsubmit="ingresarComoEstudiante(event)" class="space-y-4">
-                <p class="text-xs text-slate-400 text-center mb-2">Ingresa tu NIE para acceder a tu cuenta de estudiante.</p>
+                <p class="text-xs text-slate-400 text-center mb-2">Ingresa tu NIE y contraseña para acceder a tu cuenta de estudiante.</p>
                 <div>
                     <label class="block text-xs font-medium text-slate-400 mb-1">NIE</label>
                     <input type="text" id="input-nie-estudiante" placeholder="Ej. 20231045" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Contraseña</label>
+                    <input type="password" id="input-password-estudiante" placeholder="••••••••" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-blue-500 outline-none">
                 </div>
                 <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-lg transition flex items-center justify-center gap-2">
                     <i data-lucide="graduation-cap" class="w-4 h-4"></i> Ingresar
@@ -251,6 +255,10 @@
                             <input type="text" id="est-nie" required pattern="[0-9]{8,}" title="Solo números, 8 dígitos o más" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white">
                         </div>
                         <div class="md:col-span-2">
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Contraseña *</label>
+                            <input type="password" id="est-password" required minlength="4" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white">
+                        </div>
+                        <div class="md:col-span-2">
                             <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 px-6 rounded-lg flex items-center gap-2"><i data-lucide="user-plus" class="w-4 h-4"></i> Crear Cuenta</button>
                         </div>
                     </form>
@@ -375,12 +383,13 @@
         async function ingresarComoEstudiante(e) {
             e.preventDefault();
             const nie = document.getElementById('input-nie-estudiante').value.trim();
+            const password = document.getElementById('input-password-estudiante').value;
 
             try {
                 const res = await fetch('/api/login-estudiante', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nie })
+                    body: JSON.stringify({ nie, password })
                 });
                 const data = await res.json();
 
@@ -394,10 +403,11 @@
                     document.getElementById('usuario-nombre').textContent = nombreEstudianteActual;
                     document.getElementById('usuario-rol').textContent = 'NIE: ' + nieActual;
                     document.getElementById('input-nie-estudiante').value = '';
+                    document.getElementById('input-password-estudiante').value = '';
                     await cargarDatosDesdeAPI();
                     iniciarSesionExitosa('catalogo');
                 } else {
-                    mostrarToast(data.error || 'NIE no encontrado', 'error');
+                    mostrarToast(data.error || 'NIE o contraseña incorrectos', 'error');
                 }
             } catch (error) {
                 mostrarToast('Error de conexión', 'error');
@@ -926,7 +936,8 @@
 
             const nuevo = {
                 nombre: document.getElementById('est-nombre').value.trim(),
-                nie: document.getElementById('est-nie').value.trim()
+                nie: document.getElementById('est-nie').value.trim(),
+                password: document.getElementById('est-password').value
             };
 
             try {
@@ -995,8 +1006,7 @@
                     splash.classList.add('splash-oculto');
                     setTimeout(async () => {
                         splash.classList.add('hidden');
-
-                       document.getElementById('login-container').classList.remove('hidden');
+                        document.getElementById('login-container').classList.remove('hidden');
                     }, 500);
                 }
             }, 1200);
