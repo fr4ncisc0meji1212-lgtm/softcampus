@@ -42,12 +42,17 @@
                 <button onclick="cambiarTabLogin('admin')" id="tab-login-admin" class="flex-1 py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition">Administrador</button>
             </div>
 
-            <div id="form-login-estudiante" class="space-y-4">
-                <p class="text-xs text-slate-400 text-center mb-2">Ingresa libremente como estudiante para consultar software y armar kits.</p>
-                <button onclick="ingresarComoEstudiante()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-lg transition flex items-center justify-center gap-2">
-                    <i data-lucide="graduation-cap" class="w-4 h-4"></i> Entrar como Estudiante
+            <form id="form-login-estudiante" onsubmit="ingresarComoEstudiante(event)" class="space-y-4">
+                <p class="text-xs text-slate-400 text-center mb-2">Ingresa tu NIE para acceder a tu cuenta de estudiante.</p>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">NIE</label>
+                    <input type="text" id="input-nie-estudiante" placeholder="Ej. 20231045" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-blue-500 outline-none">
+                </div>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 rounded-lg transition flex items-center justify-center gap-2">
+                    <i data-lucide="graduation-cap" class="w-4 h-4"></i> Ingresar
                 </button>
-            </div>
+                <p class="text-[11px] text-slate-500 text-center">¿No tienes cuenta? Pide al administrador que la cree por ti.</p>
+            </form>
 
             <form id="form-login-admin" onsubmit="ingresarComoAdmin(event)" class="hidden space-y-4">
                 <div>
@@ -112,6 +117,7 @@
                     <button onclick="navegar('registrar')" class="nav-btn flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-700 text-slate-300 transition" data-sec="registrar"><i data-lucide="plus-circle" class="w-4 h-4 text-blue-400"></i> Registrar Software</button>
                     <button onclick="navegar('crear-kit')" class="nav-btn flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-700 text-slate-300 transition" data-sec="crear-kit"><i data-lucide="folder-plus" class="w-4 h-4 text-green-400"></i> Gestionar Kits</button>
                     <button onclick="navegar('verificador')" class="nav-btn flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-700 text-slate-300 transition" data-sec="verificador"><i data-lucide="check-circle" class="w-4 h-4 text-purple-400"></i> Verificador y Edición</button>
+                    <button onclick="navegar('estudiantes')" class="nav-btn flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-700 text-slate-300 transition" data-sec="estudiantes"><i data-lucide="id-card" class="w-4 h-4 text-blue-300"></i> Gestionar Estudiantes</button>
                     <button onclick="navegar('solicitudes')" class="nav-btn flex items-center justify-between gap-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-700 text-slate-300 transition" data-sec="solicitudes">
                         <span class="flex items-center gap-3"><i data-lucide="inbox" class="w-4 h-4 text-yellow-400"></i> Solicitudes</span>
                         <span id="badge-solicitudes" class="hidden bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">0</span>
@@ -231,6 +237,28 @@
                     <h2 class="text-2xl font-bold mb-4 flex items-center gap-2"><i data-lucide="check-circle" class="text-purple-500"></i> Verificador y Gestión</h2>
                     <div id="contenedor-verificador" class="space-y-3"></div>
                 </section>
+
+                <!-- Sección Gestionar Estudiantes (Admin) -->
+                <section id="sec-estudiantes" class="sec-content hidden">
+                    <h2 class="text-2xl font-bold mb-4 flex items-center gap-2 text-blue-400"><i data-lucide="id-card"></i> Gestionar Cuentas de Estudiante</h2>
+                    <form id="form-nuevo-estudiante" onsubmit="guardarNuevoEstudiante(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-900 p-5 rounded-xl border border-slate-700 mb-6">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1">Nombre del estudiante *</label>
+                            <input type="text" id="est-nombre" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1">NIE (8 dígitos o más) *</label>
+                            <input type="text" id="est-nie" required pattern="[0-9]{8,}" title="Solo números, 8 dígitos o más" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white">
+                        </div>
+                        <div class="md:col-span-2">
+                            <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 px-6 rounded-lg flex items-center gap-2"><i data-lucide="user-plus" class="w-4 h-4"></i> Crear Cuenta</button>
+                        </div>
+                    </form>
+
+                    <h3 class="text-lg font-bold mb-3 text-slate-200">Cuentas registradas</h3>
+                    <div id="contenedor-estudiantes" class="space-y-2"></div>
+                </section>
+
                 <section id="sec-solicitar" class="sec-content hidden">
                     <h2 class="text-2xl font-bold mb-4 flex items-center gap-2 text-blue-400"><i data-lucide="send"></i> Solicitar Software</h2>
                     <form id="form-solicitud" onsubmit="enviarSolicitud(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-900 p-5 rounded-xl border border-slate-700">
@@ -286,8 +314,11 @@
         let softwareBD = [];
         let solicitudes = [];
         let kitsBD = [];
+        let estudiantesBD = [];
         let favoritos = JSON.parse(localStorage.getItem('softcampus_favs')) || [1, 2];
         let rolActual = '';
+        let nieActual = '';
+        let nombreEstudianteActual = '';
         const correoAdminValido = 'admin@softcampus.edu';
         const passwordAdminValido = 'admin123';
 
@@ -301,11 +332,19 @@
                 if (resSoft.ok) softwareBD = await resSoft.json();
                 else softwareBD = datosIniciales;
 
-                const resSol = await fetch('/api/solicitudes');
+                const urlSolicitudes = (rolActual === 'estudiante' && nieActual)
+                    ? `/api/solicitudes?nie=${encodeURIComponent(nieActual)}`
+                    : '/api/solicitudes';
+                const resSol = await fetch(urlSolicitudes);
                 if (resSol.ok) solicitudes = await resSol.json();
 
                 const resKits = await fetch('/api/kits');
                 if (resKits.ok) kitsBD = await resKits.json();
+
+                if (rolActual === 'admin') {
+                    const resEst = await fetch('/api/estudiantes');
+                    if (resEst.ok) estudiantesBD = await resEst.json();
+                }
             } catch (error) {
                 softwareBD = datosIniciales;
             }
@@ -333,15 +372,39 @@
             }
         }
 
-        function ingresarComoEstudiante() {
-            rolActual = 'estudiante';
-            localStorage.setItem('softcampus_rol', 'estudiante');
-            document.getElementById('usuario-nombre').textContent = 'Estudiante';
-            document.getElementById('usuario-rol').textContent = 'Modo Consulta & Kits';
-            iniciarSesionExitosa('catalogo');
+        async function ingresarComoEstudiante(e) {
+            e.preventDefault();
+            const nie = document.getElementById('input-nie-estudiante').value.trim();
+
+            try {
+                const res = await fetch('/api/login-estudiante', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nie })
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    rolActual = 'estudiante';
+                    nieActual = data.nie;
+                    nombreEstudianteActual = data.nombre;
+                    localStorage.setItem('softcampus_rol', 'estudiante');
+                    localStorage.setItem('softcampus_nie', nieActual);
+                    localStorage.setItem('softcampus_nombre_estudiante', nombreEstudianteActual);
+                    document.getElementById('usuario-nombre').textContent = nombreEstudianteActual;
+                    document.getElementById('usuario-rol').textContent = 'NIE: ' + nieActual;
+                    document.getElementById('input-nie-estudiante').value = '';
+                    await cargarDatosDesdeAPI();
+                    iniciarSesionExitosa('catalogo');
+                } else {
+                    mostrarToast(data.error || 'NIE no encontrado', 'error');
+                }
+            } catch (error) {
+                mostrarToast('Error de conexión', 'error');
+            }
         }
 
-        function ingresarComoAdmin(e) {
+        async function ingresarComoAdmin(e) {
             e.preventDefault();
             const correo = document.getElementById('input-correo-admin').value.trim();
             const pass = document.getElementById('input-pass-admin').value;
@@ -353,6 +416,7 @@
                 document.getElementById('usuario-rol').textContent = correo;
                 document.getElementById('input-correo-admin').value = '';
                 document.getElementById('input-pass-admin').value = '';
+                await cargarDatosDesdeAPI();
                 iniciarSesionExitosa('registrar');
             } else {
                 mostrarToast("Correo o contraseña de administrador incorrectos", "error");
@@ -384,8 +448,12 @@
 
         function cerrarSesion() {
             rolActual = '';
+            nieActual = '';
+            nombreEstudianteActual = '';
             localStorage.removeItem('softcampus_rol');
             localStorage.removeItem('softcampus_seccion');
+            localStorage.removeItem('softcampus_nie');
+            localStorage.removeItem('softcampus_nombre_estudiante');
             document.getElementById('app-container').classList.add('hidden');
             document.getElementById('login-container').classList.remove('hidden');
             cambiarTabLogin('estudiante');
@@ -551,9 +619,10 @@
                 nombre: document.getElementById('sol-nombre').value,
                 carrera: document.getElementById('sol-carrera').value,
                 comentario: document.getElementById('sol-comentario').value,
-                solicitadoPor: 'Estudiante',
+                solicitadoPor: nombreEstudianteActual || 'Estudiante',
                 fecha: new Date().toLocaleDateString('es-ES'),
-                estado: 'pendiente'
+                estado: 'pendiente',
+                nie: nieActual || null
             };
 
             try {
@@ -656,6 +725,7 @@
             if (secId === 'generator') renderGenerator();
             if (secId === 'crear-kit') renderAdminKits();
             if (secId === 'verificador') renderVerificador();
+            if (secId === 'estudiantes') renderEstudiantesAdmin();
             if (secId === 'solicitar') renderMisSolicitudes();
             if (secId === 'solicitudes') renderSolicitudesAdmin();
         }
@@ -752,7 +822,7 @@
             cont.innerHTML = solicitudes.length === 0 ? `<p class="text-sm text-slate-500">Sin solicitudes pendientes.</p>` : solicitudes.map(s => `
                 <div class="bg-slate-900 border border-slate-700 rounded-lg px-4 py-3">
                     <div class="flex justify-between">
-                        <div><p class="text-sm font-semibold text-white">${s.nombre} (${s.carrera})</p><p class="text-sm text-slate-300 mt-1">${s.comentario}</p><p class="text-xs text-slate-500 mt-1">Fecha: ${s.fecha}</p></div>
+                        <div><p class="text-sm font-semibold text-white">${s.nombre} (${s.carrera})</p><p class="text-sm text-slate-300 mt-1">${s.comentario}</p><p class="text-xs text-slate-500 mt-1">Solicitado por: ${s.solicitadopor || s.solicitadoPor || 'Estudiante'} · Fecha: ${s.fecha}</p></div>
                         <span class="text-xs px-2 py-1 h-fit rounded-full ${s.estado === 'pendiente' ? 'bg-yellow-600/20 text-yellow-400' : 'bg-green-600/20 text-green-400'}">${s.estado}</span>
                     </div>
                     <div class="mt-3 flex gap-2">
@@ -850,6 +920,67 @@
             lucide.createIcons();
         }
 
+        async function guardarNuevoEstudiante(e) {
+            e.preventDefault();
+            if (rolActual !== 'admin') return;
+
+            const nuevo = {
+                nombre: document.getElementById('est-nombre').value.trim(),
+                nie: document.getElementById('est-nie').value.trim()
+            };
+
+            try {
+                const res = await fetch('/api/estudiantes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(nuevo)
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    mostrarToast(`Cuenta creada para ${nuevo.nombre}`, 'exito');
+                    document.getElementById('form-nuevo-estudiante').reset();
+                    await cargarDatosDesdeAPI();
+                    renderEstudiantesAdmin();
+                } else {
+                    mostrarToast(data.error || 'Error al crear la cuenta', 'error');
+                }
+            } catch (error) {
+                mostrarToast('Error de conexión', 'error');
+            }
+        }
+
+        async function eliminarEstudianteAdmin(id) {
+            if (rolActual !== 'admin') return;
+            if (confirm('¿Eliminar esta cuenta de estudiante?')) {
+                try {
+                    const res = await fetch(`/api/estudiantes/${id}`, { method: 'DELETE' });
+                    if (res.ok) {
+                        mostrarToast('Cuenta eliminada', 'exito');
+                        await cargarDatosDesdeAPI();
+                        renderEstudiantesAdmin();
+                    }
+                } catch (error) {
+                    mostrarToast('Error al eliminar', 'error');
+                }
+            }
+        }
+
+        function renderEstudiantesAdmin() {
+            const cont = document.getElementById('contenedor-estudiantes');
+            if (!cont) return;
+            cont.innerHTML = estudiantesBD.length === 0 ? '<p class="text-sm text-slate-500">No hay cuentas de estudiante registradas.</p>' :
+                estudiantesBD.map(est => `
+                    <div class="bg-slate-900 border border-slate-700 p-3 rounded-lg flex justify-between items-center">
+                        <div>
+                            <p class="font-semibold text-white text-sm">${est.nombre}</p>
+                            <p class="text-xs text-slate-400 font-mono">NIE: ${est.nie}</p>
+                        </div>
+                        <button onclick="eliminarEstudianteAdmin(${est.id})" class="bg-red-950/60 text-red-300 text-xs px-3 py-1.5 rounded-lg border border-red-900">Eliminar</button>
+                    </div>
+                `).join('');
+            lucide.createIcons();
+        }
+
         document.addEventListener("DOMContentLoaded", () => {
             try {
                 lucide.createIcons();
@@ -862,7 +993,7 @@
                 const splash = document.getElementById('splash-screen');
                 if (splash) {
                     splash.classList.add('splash-oculto');
-                    setTimeout(() => {
+                    setTimeout(async () => {
                         splash.classList.add('hidden');
 
                         const rolGuardado = localStorage.getItem('softcampus_rol');
@@ -874,9 +1005,12 @@
                                 document.getElementById('usuario-nombre').textContent = 'Administrador';
                                 document.getElementById('usuario-rol').textContent = correoAdminValido;
                             } else {
-                                document.getElementById('usuario-nombre').textContent = 'Estudiante';
-                                document.getElementById('usuario-rol').textContent = 'Modo Consulta & Kits';
+                                nieActual = localStorage.getItem('softcampus_nie') || '';
+                                nombreEstudianteActual = localStorage.getItem('softcampus_nombre_estudiante') || 'Estudiante';
+                                document.getElementById('usuario-nombre').textContent = nombreEstudianteActual;
+                                document.getElementById('usuario-rol').textContent = 'NIE: ' + nieActual;
                             }
+                            await cargarDatosDesdeAPI();
                             iniciarSesionExitosa(seccionGuardada);
                         } else {
                             document.getElementById('login-container').classList.remove('hidden');
@@ -888,5 +1022,3 @@
     </script>
 </body>
 </html>
-
-
