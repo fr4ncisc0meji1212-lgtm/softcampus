@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SoftCampus - Biblioteca Educativa</title>
+    <title>SoftZone - Herramientas Educativas</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -22,8 +22,8 @@
         <div class="splash-logo bg-blue-600 p-5 rounded-2xl text-white mb-4">
             <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="2" x2="22" y1="21" y2="21"/></svg>
         </div>
-        <h1 class="text-4xl font-bold tracking-tight text-white">SoftCampus</h1>
-        <p class="text-sm text-slate-400 mt-2 text-center px-6">"Todo el software educativo que necesitas, en un solo lugar."</p>
+        <h1 class="text-4xl font-bold tracking-tight text-white">SoftZone</h1>
+        <p class="text-sm text-slate-400 mt-2 text-center px-6">"Zona donde se encuentran herramientas educativas."</p>
     </div>
 
     <!-- Login -->
@@ -33,7 +33,7 @@
                 <div class="bg-blue-600 inline-block p-3 rounded-xl text-white mb-3">
                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="2" x2="22" y1="21" y2="21"/></svg>
                 </div>
-                <h1 class="text-2xl font-bold text-white">Acceso a SoftCampus</h1>
+                <h1 class="text-2xl font-bold text-white">Acceso a SoftZone</h1>
                 <p class="text-xs text-slate-400 mt-1">Selecciona tu perfil de ingreso</p>
             </div>
 
@@ -61,7 +61,7 @@
             <form id="form-login-admin" onsubmit="ingresarComoAdmin(event)" class="hidden space-y-4">
                 <div>
                     <label class="block text-xs font-medium text-slate-400 mb-1">Correo Electrónico</label>
-                    <input type="email" id="input-correo-admin" placeholder="admin@softcampus.edu" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-purple-500 outline-none">
+                    <input type="email" id="input-correo-admin" placeholder="admin@softzone.edu" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-purple-500 outline-none">
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-slate-400 mb-1">Contraseña de Administrador</label>
@@ -81,8 +81,8 @@
                 <div class="flex items-center gap-3">
                     <div class="bg-blue-600 p-2 rounded-lg text-white"><i data-lucide="laptop"></i></div>
                     <div>
-                        <h1 class="text-xl font-bold tracking-tight text-white">SoftCampus</h1>
-                        <p class="text-xs text-slate-400">"Todo el software educativo que necesitas, en un solo lugar."</p>
+                        <h1 class="text-xl font-bold tracking-tight text-white">SoftZone</h1>
+                        <p class="text-xs text-slate-400">"Zona donde se encuentran herramientas educativas."</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-3 bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-700">
@@ -323,11 +323,11 @@
         let solicitudes = [];
         let kitsBD = [];
         let estudiantesBD = [];
-        let favoritos = JSON.parse(localStorage.getItem('softcampus_favs')) || [1, 2];
+        let favoritos = JSON.parse(localStorage.getItem('softzone_favs')) || [1, 2];
         let rolActual = '';
         let nieActual = '';
         let nombreEstudianteActual = '';
-        const correoAdminValido = 'admin@softcampus.edu';
+        const correoAdminValido = 'admin@softzone.edu';
         const passwordAdminValido = 'admin123';
 
         const datosIniciales = [
@@ -397,9 +397,9 @@
                     rolActual = 'estudiante';
                     nieActual = data.nie;
                     nombreEstudianteActual = data.nombre;
-                    localStorage.setItem('softcampus_rol', 'estudiante');
-                    localStorage.setItem('softcampus_nie', nieActual);
-                    localStorage.setItem('softcampus_nombre_estudiante', nombreEstudianteActual);
+                    localStorage.setItem('softzone_rol', 'estudiante');
+                    localStorage.setItem('softzone_nie', nieActual);
+                    localStorage.setItem('softzone_nombre_estudiante', nombreEstudianteActual);
                     document.getElementById('usuario-nombre').textContent = nombreEstudianteActual;
                     document.getElementById('usuario-rol').textContent = 'NIE: ' + nieActual;
                     document.getElementById('input-nie-estudiante').value = '';
@@ -421,7 +421,7 @@
 
             if (correo === correoAdminValido && pass === passwordAdminValido) {
                 rolActual = 'admin';
-                localStorage.setItem('softcampus_rol', 'admin');
+                localStorage.setItem('softzone_rol', 'admin');
                 document.getElementById('usuario-nombre').textContent = 'Administrador';
                 document.getElementById('usuario-rol').textContent = correo;
                 document.getElementById('input-correo-admin').value = '';
@@ -460,10 +460,10 @@
             rolActual = '';
             nieActual = '';
             nombreEstudianteActual = '';
-            localStorage.removeItem('softcampus_rol');
-            localStorage.removeItem('softcampus_seccion');
-            localStorage.removeItem('softcampus_nie');
-            localStorage.removeItem('softcampus_nombre_estudiante');
+            localStorage.removeItem('softzone_rol');
+            localStorage.removeItem('softzone_seccion');
+            localStorage.removeItem('softzone_nie');
+            localStorage.removeItem('softzone_nombre_estudiante');
             document.getElementById('app-container').classList.add('hidden');
             document.getElementById('login-container').classList.remove('hidden');
             cambiarTabLogin('estudiante');
@@ -698,7 +698,7 @@
         function toggleFavorito(id) {
             if (favoritos.includes(id)) favoritos = favoritos.filter(fId => fId !== id);
             else favoritos.push(id);
-            localStorage.setItem('softcampus_favs', JSON.stringify(favoritos));
+            localStorage.setItem('softzone_favs', JSON.stringify(favoritos));
             renderCatalogo(softwareBD);
         }
 
@@ -726,7 +726,7 @@
             });
 
             if (guardarEnStorage && rolActual) {
-                localStorage.setItem('softcampus_seccion', secId);
+                localStorage.setItem('softzone_seccion', secId);
             }
 
             if (secId === 'catalogo') renderCatalogo(softwareBD);
